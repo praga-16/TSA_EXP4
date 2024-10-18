@@ -46,43 +46,104 @@ close_prices = data['Temperature'].dropna()
 plt.rcParams['figure.figsize'] = [10, 7.5]
 
 # Simulate ARMA(1,1) Process
-ar1 = np.array([1, 0.33])
-ma1 = np.array([1, 0.9])
-ARMA_1 = ArmaProcess(ar1, ma1).generate_sample(nsample=len(close_prices))
-plt.plot(ARMA_1)
-plt.title('Simulated ARMA(1,1) Process')
-plt.xlim([0, 200])
+# Step 1: Import necessary libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.tsa.arima_process import ArmaProcess
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+import warnings
+
+# Suppress warnings
+warnings.filterwarnings('ignore')
+
+# Step 2: Load the gold dataset
+file_path = 'Gold Price Prediction.csv'  # Adjust the file path as necessary
+data = pd.read_csv(file_path)
+
+# Display column names to find the price column
+print("Column names in the dataset:", data.columns)
+
+# Step 3: Use the 'Price Today' column for the ARMA model
+# Make sure to replace 'Price Today' with the correct column name if needed
+price_data = data['Price Today'].dropna()  # Drop NaN values if any
+
+# Step 4: Set up matplotlib settings for figure size
+plt.rcParams['figure.figsize'] = [10, 7.5]
+
+# Step 5: Define an ARMA(1,1) process with coefficients ar1 and ma1
+# These coefficients are arbitrary; you can adjust them based on your analysis
+ar1 = np.array([1, -0.5])  # AR coefficient
+ma1 = np.array([1, 0.5])    # MA coefficient
+# Generate a sample of 1000 data points
+ARMA_1 = ArmaProcess(ar1, ma1).generate_sample(nsample=len(price_data))
+
+# Plot the generated time series for ARMA(1,1)
+plt.figure()
+plt.plot(ARMA_1, label='ARMA(1, 1) Sample')
+plt.title('Simulated ARMA(1, 1) Process')
+plt.xlim([0, 200])  # Adjust limits as needed
+plt.xlabel('Time')
+plt.ylabel('Value')
+plt.legend()
+plt.grid()
 plt.show()
 
-# Plot ACF and PACF for ARMA(1,1)
-plot_acf(ARMA_1)
-plot_pacf(ARMA_1)
+# Step 6: Display the autocorrelation and partial autocorrelation plots for ARMA(1,1)
+plt.figure()
+plt.subplot(2, 1, 1)
+plot_acf(ARMA_1, lags=20, ax=plt.gca())
+plt.title('ACF of ARMA(1, 1) Process')
 
-# Simulate ARMA(2,2) Process
-ar2 = np.array([1, 0.33, 0.5])
-ma2 = np.array([1, 0.9, 0.3])
-ARMA_2 = ArmaProcess(ar2, ma2).generate_sample(nsample=len(close_prices) * 10)
-plt.plot(ARMA_2)
-plt.title('Simulated ARMA(2,2) Process')
-plt.xlim([0, 200])
+plt.subplot(2, 1, 2)
+plot_pacf(ARMA_1, lags=20, ax=plt.gca())
+plt.title('PACF of ARMA(1, 1) Process')
+
+plt.tight_layout()
 plt.show()
 
-# Plot ACF and PACF for ARMA(2,2)
-plot_acf(ARMA_2)
-plot_pacf(ARMA_2)
+# Step 7: Define an ARMA(2,2) process with coefficients ar2 and ma2
+ar2 = np.array([1, -0.33, 0.5])  # Adjust AR coefficients as needed
+ma2 = np.array([1, 0.9, 0.3])     # Adjust MA coefficients as needed
+# Generate a sample of 10,000 data points
+ARMA_2 = ArmaProcess(ar2, ma2).generate_sample(nsample=len(price_data) * 10)
+
+# Plot the generated time series for ARMA(2,2)
+plt.figure()
+plt.plot(ARMA_2, label='ARMA(2, 2) Sample', color='orange')
+plt.title('Simulated ARMA(2, 2) Process')
+plt.xlim([0, 200])  # Adjust limits as needed
+plt.xlabel('Time')
+plt.ylabel('Value')
+plt.legend()
+plt.grid()
+plt.show()
+
+# Step 8: Display the autocorrelation and partial autocorrelation plots for ARMA(2,2)
+plt.figure()
+plt.subplot(2, 1, 1)
+plot_acf(ARMA_2, lags=20, ax=plt.gca())
+plt.title('ACF of ARMA(2, 2) Process')
+
+plt.subplot(2, 1, 2)
+plot_pacf(ARMA_2, lags=20, ax=plt.gca())
+plt.title('PACF of ARMA(2, 2) Process')
+
+plt.tight_layout()
+plt.show()
+
 
 ```
 
 ### OUTPUT:
 SIMULATED ARMA(1,1) PROCESS:
 
-![download](https://github.com/user-attachments/assets/440ae1a4-cfb8-4ce8-a920-4478c9df6bca)
+![image](https://github.com/user-attachments/assets/139f1730-3b6e-41bf-acde-78af25cfefe5)
+
 
 
 Partial Autocorrelation
-
-![download](https://github.com/user-attachments/assets/aef87ab3-4df6-4aad-9c82-701dcfd4a029)
-
+![image](https://github.com/user-attachments/assets/751cd234-e89a-4cf6-8ef6-92233363a38e)
 
 
 Autocorrelation
@@ -92,23 +153,13 @@ Autocorrelation
 
 
 SIMULATED ARMA(2,2) PROCESS:
-
-![download](https://github.com/user-attachments/assets/53d04690-bf67-4b04-be9e-5146d7f13575)
+![image](https://github.com/user-attachments/assets/74ee7bed-6d22-44a7-b00e-e8b24f767e38)
 
 
 
 Partial Autocorrelation
-
-![download](https://github.com/user-attachments/assets/ed81e098-7ed3-4a7b-b5e3-0cb2498d5eba)
-
-
-
-
 Autocorrelation
-
-![download](https://github.com/user-attachments/assets/378b0c9c-b689-4082-a251-56c4715a31ea)
-
-
+![image](https://github.com/user-attachments/assets/fb540096-6cd3-445c-8237-12144874a72c)
 
 
 RESULT:
